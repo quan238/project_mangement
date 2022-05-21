@@ -33,22 +33,24 @@ export const attachPrivateRoutes = (app: any): void => {
    * @swagger
    * /issues:
    *  get:
+   *    operationId: getIssues
+   *    summary: Get issues
+   *    description: Get issues
    *    tags:
    *      - Issue
    *    security:
    *      - bearerAuth: []
-   *    summary: Get issues
-   *    description: Get issues
    *    responses:
-   *      '200':
-   *        description: return issues
+   *      200:
+   *        description: OK
    *        content:
-   *          application/json:
-   *          schema:
-   *            type: array
-   *            items:
-   *              $ref: '#/components/schemas/Issue'
-   *
+   *          'application/json':
+   *            schema:
+   *              type: array
+   *              items:
+   *                $ref: '#/components/schemas/Issue'
+   *      401:
+   *        $ref: '#/components/responses/UnauthorizedError'
    */
   app.get('/issues', issues.getProjectIssues);
   app.get('/issues/:issueId', issues.getIssueWithUsersAndComments);

@@ -20,6 +20,8 @@ const establishDatabaseConnection = async (): Promise<void> => {
   }
 };
 const options: swaggerJsdoc.Options = {
+  customCss:
+    'wagger-ui .opblock-description-wrapper p,.swagger-ui .opblock-external-docs-wrapper p,.swagger-ui .opblock-title_normal p{font-size:14px;margin-bottom:10px;font-family:Open Sans,sans-serif;color:#3b4151}',
   definition: {
     openapi: '3.0.0',
     info: {
@@ -28,15 +30,22 @@ const options: swaggerJsdoc.Options = {
       description:
         'This is a simple CRUD API application made with Express and documented with Swagger',
     },
+    schemes: ['http', 'https'],
     servers: [
       {
         url: 'http://localhost:3000',
+        description: 'Optional server description, e.g. Integrate (development) server',
       },
     ],
     components: {
       securitySchemes: {
         BasicAuth: { type: 'http', scheme: 'basic' },
         bearerAuth: { type: 'http', scheme: 'bearer' },
+      },
+      responses: {
+        UnauthorizedError: {
+          description: 'Access token is missing or invalid',
+        },
       },
     },
     security: [
@@ -57,7 +66,11 @@ const initializeExpress = (): void => {
   app.use(express.urlencoded({ extended: true }));
 
   app.use(addRespondToResponse);
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
+  app.use(
+    '/docs',
+    swaggerUi.serve,
+    swaggerUi.setup(specs, { customCss: 'p{margin:0!important}', explorer: true }),
+  );
 
   attachPublicRoutes(app);
   app.use('/', authenticateUser);
@@ -71,6 +84,7 @@ const initializeExpress = (): void => {
 
   app.listen(process.env.PORT || 3000, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${process.env.PORT}`);
+    console.log(`⚡️[server]: Docs is running at http://localhost:${process.env.PORT}/docs`);
   });
 };
 

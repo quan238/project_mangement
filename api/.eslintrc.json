@@ -1,5 +1,6 @@
 {
   "parser": "@typescript-eslint/parser",
+  "ignorePatterns": ["esbuild.config.js"],
   "parserOptions": {
     "project": "./tsconfig.json",
     "sourceType": "module",
@@ -11,6 +12,7 @@
   },
   "extends": [
     "airbnb-base",
+    "airbnb-typescript/base",
     "plugin:import/typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
@@ -27,7 +29,17 @@
     "@typescript-eslint/no-use-before-define": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "import/prefer-default-export": 0,
-    "import/no-cycle": 0
+    "import/no-cycle": 0,
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
   },
   "settings": {
     // Allows us to lint absolute imports within codebase

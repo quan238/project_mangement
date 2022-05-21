@@ -14,7 +14,6 @@ import { attachPublicRoutes, attachPrivateRoutes } from './routes';
 
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
-    console.log('connection');
     await createDatabaseConnection();
   } catch (error) {
     console.log(error);
@@ -45,12 +44,6 @@ const options: swaggerJsdoc.Options = {
         bearerAuth: [],
       },
     ],
-    tags: [
-      {
-        name: 'Issue',
-        description: 'Issue description',
-      },
-    ],
   },
   apis: ['**/*.ts'],
 };
@@ -61,7 +54,7 @@ const initializeExpress = (): void => {
 
   app.use(cors());
   app.use(express.json());
-  app.use(express.urlencoded());
+  app.use(express.urlencoded({ extended: true }));
 
   app.use(addRespondToResponse);
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));

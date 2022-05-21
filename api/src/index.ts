@@ -3,13 +3,13 @@ import 'dotenv/config';
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
-
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsdoc from 'swagger-jsdoc';
 import createDatabaseConnection from 'database/createConnection';
 import { addRespondToResponse } from 'middleware/response';
 import { authenticateUser } from 'middleware/authentication';
 import { handleError } from 'middleware/errors';
 import { RouteNotFoundError } from 'errors';
-
 import { attachPublicRoutes, attachPrivateRoutes } from './routes';
 
 const establishDatabaseConnection = async (): Promise<void> => {
@@ -20,19 +20,53 @@ const establishDatabaseConnection = async (): Promise<void> => {
     console.log(error);
   }
 };
+const options: swaggerJsdoc.Options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Project Management API',
+      version: '0.1.0',
+      description:
+        'This is a simple CRUD API application made with Express and documented with Swagger',
+    },
+    servers: [
+      {
+        url: 'http://localhost:3000',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        BasicAuth: { type: 'http', scheme: 'basic' },
+        bearerAuth: { type: 'http', scheme: 'bearer' },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+    tags: [
+      {
+        name: 'Issue',
+        description: 'Issue description',
+      },
+    ],
+  },
+  apis: ['**/*.ts'],
+};
 
+const specs = swaggerJsdoc(options);
 const initializeExpress = (): void => {
   const app = express();
-  console.log('reunning');
 
   app.use(cors());
   app.use(express.json());
   app.use(express.urlencoded());
 
   app.use(addRespondToResponse);
+  app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 
   attachPublicRoutes(app);
-
   app.use('/', authenticateUser);
 
   attachPrivateRoutes(app);

@@ -11,6 +11,16 @@ export const attachPublicRoutes = (app: any): void => {
     app.post('/test/create-account', test.createAccount);
   }
 
+  /**
+   * @swagger
+   * /authentication/guest:
+   *  post:
+   *    description: Use to authenticate guest user
+   *    produces:
+   *      - application/json
+   *    responses:
+   *      200: Success
+   */
   app.post('/authentication/guest', authentication.createGuestAccount);
 };
 
@@ -19,10 +29,32 @@ export const attachPrivateRoutes = (app: any): void => {
   app.put('/comments/:commentId', comments.update);
   app.delete('/comments/:commentId', comments.remove);
 
+  /**
+   * @swagger
+   * /issues:
+   *  get:
+   *    tags:
+   *      - Issue
+   *    security:
+   *      - bearerAuth: []
+   *    summary: Get issues
+   *    description: Get issues
+   *    responses:
+   *      '200':
+   *        description: return issues
+   *        content:
+   *          application/json:
+   *          schema:
+   *            type: array
+   *            items:
+   *              $ref: '#/components/schemas/Issue'
+   *
+   */
   app.get('/issues', issues.getProjectIssues);
   app.get('/issues/:issueId', issues.getIssueWithUsersAndComments);
   app.post('/issues', issues.create);
   app.put('/issues/:issueId', issues.update);
+
   app.delete('/issues/:issueId', issues.remove);
 
   app.get('/project', projects.getProjectWithUsersAndIssues);

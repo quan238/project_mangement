@@ -1,4 +1,4 @@
-import * as authentication from 'controllers/authentication';
+// import * as authentication from 'controllers/authentication';
 import * as comments from 'controllers/comments';
 import * as issues from 'controllers/issues';
 import * as projects from 'controllers/projects';
@@ -11,26 +11,25 @@ export const attachPublicRoutes = (app: any): void => {
     app.post('/test/create-account', test.createAccount);
   }
 
-  /**
-   * @swagger
-   * /authentication/guest:
-   *  tags:
-   *    - Auth
-   *  post:
-   *    description: Use to authenticate guest user
-   *    produces:
-   *      - application/json
-   *    responses:
-   *      200: Success
-   */
-  app.post('/authentication/guest', authentication.createGuestAccount);
-};
+  // app.post('/authentication/guest', authentication.createGuestAccount);
+  app.get('/issues', issues.getProjectIssues);
+  app.get('/issues/:issueId', issues.getIssueWithUsersAndComments);
+  app.post('/issues', issues.create);
+  app.put('/issues/:issueId', issues.update);
 
-export const attachPrivateRoutes = (app: any): void => {
+  app.delete('/issues/:issueId', issues.remove);
+
+  app.get('/project', projects.getProjectWithUsersAndIssues);
+  app.put('/project', projects.update);
+
+  app.get('/currentUser', users.getCurrentUser);
+
   app.post('/comments', comments.create);
   app.put('/comments/:commentId', comments.update);
   app.delete('/comments/:commentId', comments.remove);
+};
 
+export const attachPrivateRoutes = (app: any): void => {
   /**
    * @swagger
    * /issues:
@@ -54,15 +53,4 @@ export const attachPrivateRoutes = (app: any): void => {
    *      401:
    *        $ref: '#/components/responses/UnauthorizedError'
    */
-  app.get('/issues', issues.getProjectIssues);
-  app.get('/issues/:issueId', issues.getIssueWithUsersAndComments);
-  app.post('/issues', issues.create);
-  app.put('/issues/:issueId', issues.update);
-
-  app.delete('/issues/:issueId', issues.remove);
-
-  app.get('/project', projects.getProjectWithUsersAndIssues);
-  app.put('/project', projects.update);
-
-  app.get('/currentUser', users.getCurrentUser);
 };

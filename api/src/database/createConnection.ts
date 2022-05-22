@@ -6,10 +6,9 @@ const createDatabaseConnection = async (): Promise<Connection | undefined> => {
   try {
     const config: ConnectionOptions = {
       type: 'postgres',
-      url: process.env.DB_HOST,
+      url: process.env.POSTGRES_URL,
       entities: Object.values(entities),
       synchronize: true,
-      migrations: ['./migration/*.ts'],
     };
     const connection = await createConnection(config);
 

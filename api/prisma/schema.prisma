@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model comment {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @db.Timestamp(6)
+  userId    Int
+  issueId   Int
+  issue     issue    @relation(fields: [issueId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      user     @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model issue {
+  id               Int                @id @default(autoincrement())
+  title            String             @db.VarChar
+  type             String             @db.VarChar
+  status           String             @db.VarChar
+  priority         String             @db.VarChar
+  listPosition     Float
+  description      String?
+  descriptionText  String?
+  estimate         Int?
+  timeSpent        Int?
+  timeRemaining    Int?
+  createdAt        DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime           @default(now()) @db.Timestamp(6)
+  reporterId       Int
+  projectId        Int
+  project          project            @relation(fields: [projectId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comment          comment[]
+  issue_users_user issue_users_user[]
+}
+
+model issue_users_user {
+  issueId Int
+  userId  Int
+  issue   issue @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  user    user  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([issueId, userId])
+  @@index([issueId])
+  @@index([userId])
+}
+
+model project {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar
+  url         String?  @db.VarChar
+  description String?
+  category    String   @db.VarChar
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @default(now()) @db.Timestamp(6)
+  issue       issue[]
+  user        user[]
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model typeorm_metadata {
+  type     String  @db.VarChar
+  database String? @db.VarChar
+  schema   String? @db.VarChar
+  table    String? @db.VarChar
+  name     String? @db.VarChar
+  value    String?
+
+  @@ignore
+}
+
+model user {
+  id               Int                @id @default(autoincrement())
+  name             String             @db.VarChar
+  email            String             @db.VarChar
+  avatarUrl        String             @db.VarChar(2000)
+  createdAt        DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt        DateTime           @default(now()) @db.Timestamp(6)
+  projectId        Int?
+  project          project?           @relation(fields: [projectId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  comment          comment[]
+  issue_users_user issue_users_user[]
+}

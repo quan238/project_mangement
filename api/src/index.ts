@@ -1,4 +1,3 @@
-import createGuestAccount from './database/createGuestAccount';
 import 'module-alias/register';
 import 'dotenv/config';
 import 'reflect-metadata';
@@ -12,10 +11,12 @@ import { authenticateUser } from 'middleware/authentication';
 import { handleError } from 'middleware/errors';
 import { RouteNotFoundError } from 'errors';
 import { attachPublicRoutes, attachPrivateRoutes } from './routes';
+import { Connection } from 'typeorm';
 
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
-    await createDatabaseConnection();
+    const connection: Connection | undefined = await createDatabaseConnection();
+    if (connection) await connection.runMigrations();
   } catch (error) {
     console.log(error);
   }
@@ -91,7 +92,7 @@ const initializeExpress = (): void => {
 
 const initializeApp = async (): Promise<void> => {
   try {
-    await establishDatabaseConnection();
+    // await establishDatabaseConnection();
     initializeExpress();
   } catch (err) {
     console.log(err);

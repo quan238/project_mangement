@@ -14,6 +14,8 @@ export const attachPublicRoutes = (app: any): void => {
   /**
    * @swagger
    * /authentication/guest:
+   *  tags:
+   *    - Auth
    *  post:
    *    description: Use to authenticate guest user
    *    produces:

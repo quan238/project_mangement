@@ -1,11 +1,13 @@
 {
-  "name": "jira_api",
+  "name": "pm_app",
   "version": "1.0.0",
-  "author": "Ivor Reic",
+  "author": "quantran238",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon --exec ts-node --files src/index.ts",
+    "start": "docker compose up",
+    "start:docker": "docker compose build backend && docker compose rm --stop backend && docker compose up -d backend",
     "dev": "nodemon",
+    "seed": "ts-node ./src/database/seed.ts",
     "build": "node esbuild.config.js",
     "start:test": "cross-env NODE_ENV='test' DB_DATABASE='jira_test' npm start",
     "start:production": "pm2 start --name 'jira_api' node -- -r ./tsconfig-paths.js build/index.js",

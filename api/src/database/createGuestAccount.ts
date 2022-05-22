@@ -3,7 +3,7 @@ import { ProjectCategory } from 'constants/projects';
 import { IssueType, IssueStatus, IssuePriority } from 'constants/issues';
 import { createEntity } from 'utils/typeorm';
 
-const seedUsers = (): Promise<User[]> => {
+export const seedUsers = (): Promise<User[]> => {
   const users = [
     createEntity(User, {
       email: 'rick@jira.guest',
@@ -24,7 +24,7 @@ const seedUsers = (): Promise<User[]> => {
   return Promise.all(users);
 };
 
-const seedProject = (users: User[]): Promise<Project> =>
+export const seedProject = (users: User[]): Promise<Project> =>
   createEntity(Project, {
     name: 'singularity 1.0',
     url: 'https://www.atlassian.com/software/jira',
@@ -34,7 +34,7 @@ const seedProject = (users: User[]): Promise<Project> =>
     users,
   });
 
-const seedIssues = (project: Project): Promise<Issue[]> => {
+export const seedIssues = (project: Project): Promise<Issue[]> => {
   const { users } = project;
 
   const issues = [
@@ -144,7 +144,7 @@ const seedIssues = (project: Project): Promise<Issue[]> => {
   return Promise.all(issues);
 };
 
-const seedComments = (issues: Issue[], users: User[]): Promise<Comment[]> => {
+export const seedComments = (issues: Issue[], users: User[]): Promise<Comment[]> => {
   const comments = [
     createEntity(Comment, {
       body: 'An old silent pond...\nA frog jumps into the pond,\nsplash! Silence again.',

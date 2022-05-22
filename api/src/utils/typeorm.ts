@@ -22,6 +22,7 @@ export const findEntityOrThrow = async <T extends EntityConstructor>(
 };
 
 export const validateAndSaveEntity = async <T extends EntityInstance>(instance: T): Promise<T> => {
+  console.log(instance.constructor);
   const Constructor = entities[instance.constructor.name];
 
   if ('validations' in Constructor) {

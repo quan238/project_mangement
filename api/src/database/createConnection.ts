@@ -1,19 +1,17 @@
-import { createConnection, Connection } from 'typeorm';
+import { createConnection, Connection, ConnectionOptions } from 'typeorm';
 
 import * as entities from 'entities';
 
 const createDatabaseConnection = async (): Promise<Connection | undefined> => {
   try {
-    const connection = await createConnection({
+    const config: ConnectionOptions = {
       type: 'postgres',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
+      url: process.env.DB_HOST,
       entities: Object.values(entities),
       synchronize: true,
-    });
+      migrations: ['./migration/*.ts'],
+    };
+    const connection = await createConnection(config);
 
     if (!connection) {
       throw new Error(`Could not connect to database`);

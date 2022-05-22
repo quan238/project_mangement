@@ -1,0 +1,55 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pm_app
+      POSTGRES_HOST_AUTH_METHOD: trust
+    restart: always
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+      - ./database/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: quantran2381@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 238200
+      GUNICORN_ACCESS_LOGFILE: '/dev/null'
+    ports:
+      - '5050:80'
+    restart: always
+    volumes:
+      - pgadmin:/root/.pgadmin
+    logging:
+      driver: none
+  backend:
+    build: ./
+    ports:
+      - '3000:3000'
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    command: 'npm run dev'
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DB_HOST: postgres://postgres@postgres:5432/pm_app
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_DATABASE: pm_app
+      DB_PORT: 5432
+      JWT_SECRET: development12345
+
+volumes:
+  database-data:
+  pgadmin:

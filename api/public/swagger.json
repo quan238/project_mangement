@@ -9,13 +9,13 @@
 		"securitySchemes": {}
 	},
 	"info": {
-		"title": "jira_api",
+		"title": "pm_app",
 		"version": "1.0.0",
 		"license": {
 			"name": "MIT"
 		},
 		"contact": {
-			"name": "Ivor Reic"
+			"name": "quantran238"
 		}
 	},
 	"openapi": "3.0.0",

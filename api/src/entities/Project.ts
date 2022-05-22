@@ -12,7 +12,7 @@ import is from 'utils/validation';
 import { ProjectCategory } from 'constants/projects';
 import { Issue, User } from '.';
 
-@Entity()
+@Entity("Project")
 class Project extends BaseEntity {
   static validations = {
     name: [is.required(), is.maxLength(100)],

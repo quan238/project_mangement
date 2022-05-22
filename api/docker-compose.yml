@@ -14,13 +14,12 @@ services:
     restart: always
     volumes:
       - database-data:/var/lib/postgresql/data/
-      - ./database/init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
   pgadmin:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: quantran2381@gmail.com
       PGADMIN_DEFAULT_PASSWORD: 238200
-      GUNICORN_ACCESS_LOGFILE: '/dev/null'
+      GUNICORN_ACCESS_LOGFILE: /dev/null
     ports:
       - '5050:80'
     restart: always
@@ -43,7 +42,8 @@ services:
     environment:
       NODE_ENV: development
       PORT: 3000
-      DB_HOST: postgres://postgres@postgres:5432/pm_app
+      DB_URL: postgres://postgres@postgres:5432/pm_app
+      DB_HOST: postgres
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
       DB_DATABASE: pm_app

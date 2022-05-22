@@ -78,7 +78,7 @@ import { Comment, Issue, Project } from '.';
  *           description: The issue's projectId.
  *           example: 10
  */
-@Entity()
+@Entity("User")
 class User extends BaseEntity {
   static validations = {
     name: [is.required(), is.maxLength(100)],

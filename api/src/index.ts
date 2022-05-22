@@ -1,4 +1,3 @@
-import createGuestAccount from './database/createGuestAccount';
 import 'module-alias/register';
 import 'dotenv/config';
 import 'reflect-metadata';

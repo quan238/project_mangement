@@ -11,7 +11,7 @@
 ## Setting up development environment 🛠
 
 - Install [postgreSQL](https://www.postgresql.org/) if you don't have it already and create a database named `jira_development`.
-- `git clone https://github.com/oldboyxx/jira_clone.git`
+- `[git clone https://github.com/oldboyxx/jira_clone.git](https://github.com/quan832/project_mangement)`
 - Create an empty `.env` file in `/api`, copy `/api/.env.example` contents into it, and fill in your database username and password.
 - `npm run install-dependencies`
 - `cd api && npm start`

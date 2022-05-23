@@ -5,7 +5,6 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
   OneToMany,
   ManyToMany,
@@ -83,7 +82,7 @@ import { Comment, Project, User } from '.';
  *           description: The issue's projectId.
  *           example: 10
  */
-@Entity("Issue")
+@Entity('Issue')
 class Issue extends BaseEntity {
   static validations = {
     title: [is.required(), is.maxLength(200)],
@@ -130,7 +129,7 @@ class Issue extends BaseEntity {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   @Column('integer')

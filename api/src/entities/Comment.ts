@@ -4,14 +4,13 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
 
 import is from 'utils/validation';
 import { Issue, User } from '.';
 
-@Entity("Comment")
+@Entity('Comment')
 class Comment extends BaseEntity {
   static validations = {
     body: [is.required(), is.maxLength(50000)],
@@ -26,7 +25,7 @@ class Comment extends BaseEntity {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   @ManyToOne(

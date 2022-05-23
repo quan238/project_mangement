@@ -4,13 +4,14 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
   ManyToMany,
   ManyToOne,
   RelationId,
+  Index,
+  BeforeInsert,
 } from 'typeorm';
-
+import bcrypt from 'bcryptjs';
 import is from 'utils/validation';
 import { Comment, Issue, Project } from '.';
 
@@ -78,8 +79,8 @@ import { Comment, Issue, Project } from '.';
  *           description: The issue's projectId.
  *           example: 10
  */
-@Entity("User")
-class User extends BaseEntity {
+@Entity('User')
+class User  extends BaseEntity{
   static validations = {
     name: [is.required(), is.maxLength(100)],
     email: [is.required(), is.email(), is.maxLength(200)],
@@ -91,8 +92,12 @@ class User extends BaseEntity {
   @Column('varchar')
   name: string;
 
-  @Column('varchar')
+  @Index('email_index')
+  @Column('varchar', { unique: true })
   email: string;
+
+  @Column('varchar')
+  password: string;
 
   @Column('varchar', { length: 2000 })
   avatarUrl: string;
@@ -100,7 +105,7 @@ class User extends BaseEntity {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   @OneToMany(
@@ -123,6 +128,21 @@ class User extends BaseEntity {
 
   @RelationId((user: User) => user.project)
   projectId: number;
+
+  toJSON() {
+    return { ...this, password: undefined };
+  }
+
+  //  Hash password before saving to database
+  @BeforeInsert()
+  async hashPassword() {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
+
+  //  Validate password
+  static async comparePasswords(candidatePassword: string, hashedPassword: string) {
+    return await bcrypt.compare(candidatePassword, hashedPassword);
+  }
 }
 
 export default User;

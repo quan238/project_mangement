@@ -4,7 +4,6 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
 
@@ -12,7 +11,7 @@ import is from 'utils/validation';
 import { ProjectCategory } from 'constants/projects';
 import { Issue, User } from '.';
 
-@Entity("Project")
+@Entity('Project')
 class Project extends BaseEntity {
   static validations = {
     name: [is.required(), is.maxLength(100)],
@@ -38,7 +37,7 @@ class Project extends BaseEntity {
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   updatedAt: Date;
 
   @OneToMany(

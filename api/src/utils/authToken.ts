@@ -7,7 +7,6 @@ import { CookieOptions } from 'express';
 
 //  Sign access and Refresh Tokens
 export const signTokens = async (user: User | any) => {
-  console.log(user);
   // 1. Create Session
   redisClient.set(user.id, JSON.stringify(user));
 

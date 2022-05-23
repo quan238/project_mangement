@@ -31,6 +31,19 @@ export class BadUserInputError extends CustomError {
   }
 }
 
+export class AuthenticationError extends CustomError {
+  constructor(errorData: ErrorData) {
+    super('There were validation errors.', 'NOT_AUTHORIZATION', 403, errorData);
+  }
+}
+
+export class InvalidSession extends CustomError {
+  constructor(message = 'Authentication session is invalid.') {
+    super(message, 'INVALID_SESSION', 401);
+  }
+}
+
+
 export class InvalidTokenError extends CustomError {
   constructor(message = 'Authentication token is invalid.') {
     super(message, 'INVALID_TOKEN', 401);

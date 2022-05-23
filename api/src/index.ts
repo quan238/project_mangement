@@ -11,7 +11,10 @@ import { authenticateUser } from 'middleware/authentication';
 import { handleError } from 'middleware/errors';
 import { RouteNotFoundError } from 'errors';
 import { attachPublicRoutes, attachPrivateRoutes } from './routes';
-
+import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
+import path from 'path';
+import fs from 'fs';
 const establishDatabaseConnection = async (): Promise<void> => {
   try {
     await createDatabaseConnection();
@@ -66,15 +69,39 @@ const initializeExpress = (): void => {
   app.use(express.urlencoded({ extended: true }));
 
   app.use(addRespondToResponse);
+
+  if (process.env.NODE_ENV !== 'production') {
+    app.use(
+      morgan('common', {
+        stream: fs.createWriteStream('./log/access.log', {
+          flags: 'a',
+        }),
+      }),
+    );
+    app.use(morgan('dev'));
+  }
+
+  // 3. Cookie Parser
+  app.use(cookieParser());
+
+  app.use(
+    cors({
+      origin: '*',
+      credentials: true,
+    }),
+  );
+
   app.use(
     '/docs',
     swaggerUi.serve,
-    swaggerUi.setup(specs, { customCss: 'p{margin:0!important}', explorer: true }),
+    swaggerUi.setup(specs, {
+      customCss: 'p{margin:0!important}',
+      explorer: true,
+    }),
   );
 
   attachPublicRoutes(app);
   app.use('/', authenticateUser);
-
   attachPrivateRoutes(app);
 
   app.use((req: { originalUrl: string }, _res: any, next: (arg0: RouteNotFoundError) => any) =>

@@ -6,6 +6,7 @@ import * as test from 'controllers/test';
 import * as users from 'controllers/users';
 import { LoginDto } from 'dto/auth';
 import { CreateUpdateUserDto } from 'dto/user';
+import { requireUser } from 'middleware/authentication';
 import dtoValidationMiddleware from 'middleware/dtoValidation';
 
 export const attachPublicRoutes = (app: any): void => {
@@ -27,17 +28,17 @@ export const attachPublicRoutes = (app: any): void => {
    *      200: Success
    */
   app.post('/authentication/guest', authentication.createGuestAccount);
-  app.get('/users', users.getUsers);
-  app.post('/users', dtoValidationMiddleware(CreateUpdateUserDto), users.createUser);
-
   app.post('/login', dtoValidationMiddleware(LoginDto), authentication.loginAccount);
+  app.post('/refresh-token', authentication.refreshAccessToken);
 };
 
 export const attachPrivateRoutes = (app: any): void => {
+  app.post('/logout', requireUser, authentication.logoutController);
   app.post('/comments', comments.create);
   app.put('/comments/:commentId', comments.update);
   app.delete('/comments/:commentId', comments.remove);
-
+  app.get('/users', users.getUsers);
+  app.post('/users', dtoValidationMiddleware(CreateUpdateUserDto), users.createUser);
   /**
    * @swagger
    * /issues:
@@ -65,11 +66,8 @@ export const attachPrivateRoutes = (app: any): void => {
   app.get('/issues/:issueId', issues.getIssueWithUsersAndComments);
   app.post('/issues', issues.create);
   app.put('/issues/:issueId', issues.update);
-
   app.delete('/issues/:issueId', issues.remove);
-
   app.get('/project', projects.getProjectWithUsersAndIssues);
-  // app.put('/project', projects.update);
-
+  app.put('/project', projects.update);
   app.get('/currentUser', users.getCurrentUser);
 };

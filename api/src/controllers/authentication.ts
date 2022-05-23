@@ -1,5 +1,10 @@
 import { BadUserInputError, catchErrors } from 'errors';
-import { signToken } from 'utils/authToken';
+import {
+  accessTokenCookieOptions,
+  refreshTokenCookieOptions,
+  signToken,
+  signTokens,
+} from 'utils/authToken';
 import createAccount from 'database/createGuestAccount';
 import resetDatabase from 'database/resetDatabase';
 import { User } from 'entities';
@@ -15,11 +20,23 @@ export const createGuestAccount = catchErrors(async (_req, res) => {
 export const loginAccount = catchErrors(async (req, res) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ where: { email: email } });
+  const user = await User.findOne({ where: { email } });
 
   if (!user || !(await User.comparePasswords(password, user.password))) {
-    throw new BadUserInputError({ userNotFound: 'User is not found or invalid' });
+    throw new BadUserInputError({
+      userNotFound: 'User is not found or invalid',
+    });
   }
 
-  res.respond({ user });
+  const { access_token, refresh_token } = await signTokens(user);
+
+  // 3. Add Cookies
+  res.cookie('access_token', access_token, accessTokenCookieOptions);
+  res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
+  res.cookie('logged_in', true, {
+    ...accessTokenCookieOptions,
+    httpOnly: false,
+  });
+
+  res.status(200).respond({ accessToken: access_token });
 });

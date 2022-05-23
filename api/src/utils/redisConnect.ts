@@ -1,20 +1,18 @@
-import * as redis from 'redis';
+import Redis from 'ioredis';
 
-const redisClient = redis.createClient({
-  url: process.env.REDIS_URL,
-});
+const redis = new Redis(process.env.REDIS_URL);
 
 const connectRedis = async () => {
   try {
-    redisClient.connect();
+    // redis.connect();
     console.log(`⚡️[server]: Redis has been connected`);
-    redisClient.set('try', 'pm_app');
+    redis.set('try', 'pm_app');
   } catch (error) {
     console.log(error);
     setTimeout(connectRedis, 5000);
   }
 };
 
-// connectRedis();
+connectRedis();
 
-export default redisClient;
+export default redis;

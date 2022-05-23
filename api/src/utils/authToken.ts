@@ -3,13 +3,13 @@ import { isPlainObject } from 'lodash';
 import { InvalidTokenError } from 'errors';
 import { User } from 'entities';
 import redisClient from './redisConnect';
+import { CookieOptions } from 'express';
 
 //  Sign access and Refresh Tokens
 export const signTokens = async (user: User | any) => {
+  console.log(user);
   // 1. Create Session
-  redisClient.set(user.id, JSON.stringify(user), {
-    EX: 60 * 60,
-  });
+  redisClient.set(user.id, JSON.stringify(user));
 
   // 2. Create Access and Refresh tokens
   const access_token = signToken(
@@ -46,4 +46,21 @@ export const verifyToken = (token: string): { [key: string]: any } => {
   } catch (error) {
     throw new InvalidTokenError();
   }
+};
+
+const cookiesOptions: CookieOptions = {
+  httpOnly: true,
+  sameSite: 'lax',
+};
+
+export const accessTokenCookieOptions: CookieOptions = {
+  ...cookiesOptions,
+  expires: new Date(Date.now() + 15 * 60 * 1000),
+  maxAge: 15 * 60 * 1000,
+};
+
+export const refreshTokenCookieOptions: CookieOptions = {
+  ...cookiesOptions,
+  expires: new Date(Date.now() + 60 * 60 * 1000),
+  maxAge: 60 * 60 * 1000,
 };

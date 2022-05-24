@@ -14,8 +14,10 @@ import redis from 'utils/redisConnect';
 export const createGuestAccount = catchErrors(async (_req, res) => {
   await resetDatabase();
   const user = await createAccount();
+  const { access_token, refresh_token } = await signTokens(user);
   res.respond({
-    authToken: signToken({ sub: user.id }),
+    authToken: access_token,
+    refreshToken: refresh_token,
   });
 });
 

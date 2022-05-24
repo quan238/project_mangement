@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { color, sizes, font, mixin, zIndexValues } from 'shared/utils/styles';
+import { color, sizes, font, mixin, zIndexValues, height } from 'shared/utils/styles';
 
 export const Sidebar = styled.div`
   position: fixed;
@@ -9,7 +9,7 @@ export const Sidebar = styled.div`
   left: ${sizes.appNavBarLeftWidth}px;
   height: 100vh;
   width: ${sizes.secondarySideBarWidth}px;
-  padding: 0 16px 24px;
+  padding: ${height.header}px 16px 24px;
   background: ${color.backgroundLightest};
   border-right: 1px solid ${color.borderLightest};
   ${mixin.scrollableY}

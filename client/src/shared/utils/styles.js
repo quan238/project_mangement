@@ -22,6 +22,7 @@ export const color = {
   backgroundLightest: '#F4F5F7',
   backgroundLightPrimary: '#D2E5FE',
   backgroundLightSuccess: '#E4FCEF',
+  backgroundLightHeader: '#ffffff',
 
   borderLightest: '#dfe1e6',
   borderLight: '#C1C7D0',
@@ -57,9 +58,15 @@ export const issueStatusBackgroundColors = {
 };
 
 export const sizes = {
-  appNavBarLeftWidth: 64,
+  appNavBarLeftWidth: 0,
+  header: '100%',
   secondarySideBarWidth: 230,
   minViewportWidth: 1000,
+};
+
+export const height = {
+  header: 56,
+  afterHeader: 4,
 };
 
 export const zIndexValues = {

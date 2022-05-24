@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 
 import { color as Color, font, mixin } from 'shared/utils/styles';
-import { space, layout, color, border } from 'styled-system';
+import { space, layout, color, border, typography } from 'styled-system';
 
 import Spinner from 'shared/components/Spinner';
 
@@ -28,6 +28,7 @@ export const StyledButton = styled.button`
   ${layout}
   ${color}
   ${border}
+  ${typography}
 `;
 
 const colored = css`

@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components';
 
-import { color, font, mixin } from 'shared/utils/styles';
+import { color as Color, font, mixin } from 'shared/utils/styles';
+import { space, layout, color, border } from 'styled-system';
+
 import Spinner from 'shared/components/Spinner';
 
 export const StyledButton = styled.button`
@@ -22,43 +24,47 @@ export const StyledButton = styled.button`
     opacity: 0.6;
     cursor: default;
   }
+  ${space}
+  ${layout}
+  ${color}
+  ${border}
 `;
 
 const colored = css`
   color: #fff;
-  background: ${props => color[props.variant]};
+  background: ${props => Color[props.variant]};
   ${font.medium}
   &:not(:disabled) {
     &:hover {
-      background: ${props => mixin.lighten(color[props.variant], 0.15)};
+      background: ${props => mixin.lighten(Color[props.variant], 0.15)};
     }
     &:active {
-      background: ${props => mixin.darken(color[props.variant], 0.1)};
+      background: ${props => mixin.darken(Color[props.variant], 0.1)};
     }
     ${props =>
       props.isActive &&
       css`
-        background: ${mixin.darken(color[props.variant], 0.1)} !important;
+        background: ${mixin.darken(Color[props.variant], 0.1)} !important;
       `}
   }
 `;
 
 const secondaryAndEmptyShared = css`
-  color: ${color.textDark};
+  color: ${Color.textDark};
   ${font.regular}
   &:not(:disabled) {
     &:hover {
-      background: ${color.backgroundLight};
+      background: ${Color.backgroundLight};
     }
     &:active {
-      color: ${color.primary};
-      background: ${color.backgroundLightPrimary};
+      color: ${Color.primary};
+      background: ${Color.backgroundLightPrimary};
     }
     ${props =>
       props.isActive &&
       css`
-        color: ${color.primary};
-        background: ${color.backgroundLightPrimary} !important;
+        color: ${Color.primary};
+        background: ${Color.backgroundLightPrimary} !important;
       `}
   }
 `;
@@ -68,7 +74,7 @@ const buttonVariants = {
   success: colored,
   danger: colored,
   secondary: css`
-    background: ${color.secondary};
+    background: ${Color.secondary};
     ${secondaryAndEmptyShared};
   `,
   empty: css`
@@ -83,5 +89,7 @@ export const StyledSpinner = styled(Spinner)`
 `;
 
 export const Text = styled.div`
+  display: flex;
+  align-items: center;
   padding-left: ${props => (props.withPadding ? 7 : 0)}px;
 `;

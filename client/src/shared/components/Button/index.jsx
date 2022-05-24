@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
-import { color } from 'shared/utils/styles';
+import { color as Color } from 'shared/utils/styles';
 import Icon from 'shared/components/Icon';
 
 import { StyledButton, StyledSpinner, Text } from './Styles';
@@ -60,7 +60,7 @@ const Button = forwardRef(
 );
 
 const getIconColor = variant =>
-  ['secondary', 'empty'].includes(variant) ? color.textDark : '#fff';
+  ['secondary', 'empty'].includes(variant) ? Color.textDark : '#fff';
 
 Button.propTypes = propTypes;
 Button.defaultProps = defaultProps;

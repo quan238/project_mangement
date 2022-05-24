@@ -19,6 +19,7 @@ const fontIconCodes = {
   [`help`]: '\\e905',
   [`link`]: '\\e90c',
   [`menu`]: '\\e916',
+  [`google`]: '',
   [`more`]: '\\e90e',
   [`attach`]: '\\e90d',
   [`plus`]: '\\e906',

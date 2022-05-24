@@ -1,4 +1,9 @@
-import { AuthenticationError, BadUserInputError, catchErrors } from 'errors';
+import {
+  AuthenticationError,
+  BadUserErrorWithMessage,
+  BadUserInputError,
+  catchErrors,
+} from 'errors';
 import {
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
@@ -27,9 +32,7 @@ export const loginAccount = catchErrors(async (req, res) => {
   const user = await User.findOne({ where: { email } });
 
   if (!user || !(await User.comparePasswords(password, user.password))) {
-    throw new BadUserInputError({
-      userNotFound: 'User is not found or invalid',
-    });
+    throw new BadUserErrorWithMessage('User is not found or invalid');
   }
 
   const { access_token, refresh_token } = await signTokens(user);

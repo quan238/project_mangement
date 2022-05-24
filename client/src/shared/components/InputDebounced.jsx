@@ -18,7 +18,7 @@ const InputDebounced = ({ onChange, value: propsValue, ...inputProps }) => {
   const isControlled = propsValue !== undefined;
 
   const handleChange = useCallback(
-    debounce(newValue => onChange(newValue), 500),
+    debounce(newValue => onChange(newValue), 100),
     [],
   );
 

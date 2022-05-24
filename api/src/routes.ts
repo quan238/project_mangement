@@ -30,6 +30,8 @@ export const attachPublicRoutes = (app: any): void => {
   app.post('/authentication/guest', authentication.createGuestAccount);
   app.post('/login', dtoValidationMiddleware(LoginDto), authentication.loginAccount);
   app.post('/refresh-token', authentication.refreshAccessToken);
+  app.get('/users', users.getUsers);
+  app.post('/users', dtoValidationMiddleware(CreateUpdateUserDto), users.createUser);
 };
 
 export const attachPrivateRoutes = (app: any): void => {
@@ -37,8 +39,7 @@ export const attachPrivateRoutes = (app: any): void => {
   app.post('/comments', comments.create);
   app.put('/comments/:commentId', comments.update);
   app.delete('/comments/:commentId', comments.remove);
-  app.get('/users', users.getUsers);
-  app.post('/users', dtoValidationMiddleware(CreateUpdateUserDto), users.createUser);
+
   /**
    * @swagger
    * /issues:

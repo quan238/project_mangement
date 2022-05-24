@@ -1,8 +1,13 @@
 import { InputLabel } from 'Project/Board/IssueDetails/EstimateTracking/Styles';
 import React from 'react';
 // import { useRouteMatch, useHistory } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Button, InputDebounced } from 'shared/components';
+import api from 'shared/utils/api';
+import { storeAuthToken } from 'shared/utils/authToken';
+import './Login.css';
+import toast from 'shared/utils/toast';
+import Google from '../assets/google.svg';
 import {
   LoginPage,
   BackgroundPage,
@@ -12,10 +17,24 @@ import {
   FormInput,
   TitleAuth,
 } from './Styled';
-import './Login.css';
-import Google from '../assets/google.svg';
 
 const Login = () => {
+  const history = useHistory();
+
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const onLogin = async data => {
+    try {
+      const { accessToken } = await api.post('/login', data);
+      storeAuthToken(accessToken);
+      history.push('/');
+      toast.success('Login successful');
+    } catch (error) {
+      toast.error(error);
+    }
+  };
+
   return (
     <LoginPage>
       <LeftPage>
@@ -49,7 +68,11 @@ const Login = () => {
         <div style={{ marginTop: '20px' }}>
           <FormInput>
             <InputLabel>Email Address</InputLabel>
-            <InputDebounced placeholder="name@gmail.com" className="auth-input" />
+            <InputDebounced
+              placeholder="name@gmail.com"
+              className="auth-input"
+              onChange={value => setEmail(value)}
+            />
           </FormInput>
           <FormInput>
             <InputLabel>Password</InputLabel>
@@ -57,6 +80,7 @@ const Login = () => {
               type="password"
               placeholder="Enter your password"
               className="auth-input"
+              onChange={value => setPassword(value)}
             />
           </FormInput>
           <Button
@@ -64,7 +88,7 @@ const Login = () => {
             mt="1.5vh"
             height={['40px']}
             variant="primary"
-            onClick={() => console.log('login')}
+            onClick={() => onLogin({ email, password })}
           >
             Login
           </Button>

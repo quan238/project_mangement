@@ -43,6 +43,11 @@ export class InvalidSession extends CustomError {
   }
 }
 
+export class BadUserErrorWithMessage extends CustomError {
+  constructor(message = '401 Invalid User') {
+    super(message, 'BAD_USER_INPUT', 401);
+  }
+}
 
 export class InvalidTokenError extends CustomError {
   constructor(message = 'Authentication token is invalid.') {

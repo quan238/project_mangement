@@ -41,17 +41,22 @@ const Project = () => {
     const selectedProject = getProjectSelected()
 
     const users = useCurrentUser()
-
+    const [defaultSelectedProject, setDefaultSelectedProject] = React.useState(1)
     const [{
         data: selectedData,
         error: errorSelected,
     }] = useApi.get(`/project/me`);
+    console.log(selectedData)
+    // const defaultSelectedProject = selectedData && selectedData.length > 0 ? selectedData[0].id : null
 
-    const defaultSelectedProject = selectedData && selectedData.length > 0 ? selectedData[0].id : null
 
-    if (!defaultSelectedProject && !selectProject) {
-        history.push('/create-project')
-    }
+
+    React.useEffect(() => {
+        if (selectedData && selectedData.length > 0) {
+            setDefaultSelectedProject(selectedData[0].id)
+        }
+    }, [selectedData])
+
 
     const [{
         data,
@@ -59,7 +64,7 @@ const Project = () => {
         setLocalData
     }, fetchProject] = useApi.get(`/project`, {projectId: selectedProject || defaultSelectedProject});
 
-    if (!data || !selectedData) return <PageLoader/>;
+    if (!data || !selectedData || !users) return <PageLoader/>;
     if (error || errorSelected) return <PageError/>;
 
     const {project} = data;
@@ -75,6 +80,10 @@ const Project = () => {
 
     if (!selectedProject && !selectProject.isOpen()) {
         selectProject.open()
+    }
+
+    if (!defaultSelectedProject && !selectedProject) {
+        history.push('/create-project')
     }
 
     const onSelectProject = (projectId) => {

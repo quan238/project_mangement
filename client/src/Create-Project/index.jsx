@@ -18,7 +18,7 @@ const CreateProject = () => {
     const history = useHistory();
     const [{data, error, setLocalData}, fetchUsers] = useApi.get(`/users`);
 
-    if (!data) return <PageLoader/>;
+    if (!data || !currentUser) return <PageLoader/>;
     if (error) return <PageError/>;
     const {users} = data
 
@@ -26,6 +26,7 @@ const CreateProject = () => {
         <CreateProjectComponent>
             <Header
                 isButton={false}
+                user={currentUser.currentUser}
             />
             <Form
                 enableReinitialize
@@ -46,10 +47,11 @@ const CreateProject = () => {
                     try {
                         await createProject({
                             ...values,
-                            users: [...values.users,currentUser.currentUser]
+                            users: [...values.users, currentUser.currentUser]
                         });
                         removeProjectSelected()
-                        history.push('/')
+                     
+                        history.replace('/project')
                         toast.success('Create project have been successfully.');
                     } catch (error) {
                         Form.handleAPIError(error, form);

@@ -4,18 +4,21 @@ import {createEntity, findEntityOrThrow, updateEntity} from 'utils/typeorm';
 import {issuePartial} from 'serializers/issues';
 
 export const getProjectWithUsersAndIssues = catchErrors(async (req, res) => {
-    const {projectId} = req.query;
+    const projectId = req.query.projectId ? req.query.projectId : null;
+    if (projectId) {
+        const project = await findEntityOrThrow(Project, projectId as string, {
+            relations: ['users', 'issues'],
+        });
 
-    const project = await findEntityOrThrow(Project, projectId as string, {
-        relations: ['users', 'issues'],
-    });
+        res.respond({
+            project: {
+                ...project,
+                issues: project.issues.map(issuePartial),
+            },
+        });
+    }
 
-    res.respond({
-        project: {
-            ...project,
-            issues: project.issues.map(issuePartial),
-        },
-    });
+  
 });
 
 export const create = catchErrors(async (req, res) => {

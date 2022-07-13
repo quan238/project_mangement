@@ -30,7 +30,7 @@ const ProjectTopHeader = ({issueSearchModalOpen, user, issueCreateModalOpen, sel
                 </ItemList>
             </React.Fragment>
             : null}
-        <HeaderUser
+        {user ? <HeaderUser
             placement="bottom"
             offset={{
                 left: -125
@@ -40,7 +40,8 @@ const ProjectTopHeader = ({issueSearchModalOpen, user, issueCreateModalOpen, sel
                     <Avatar avatarUrl={user.avatarUrl} name={user.name} size={35}/>
                 </div>
             )}
-        />
+        /> : null}
+
 
     </HeaderStyled>
 );

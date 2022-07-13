@@ -4,9 +4,10 @@ import {findEntityOrThrow, updateEntity} from 'utils/typeorm';
 import {issuePartial} from 'serializers/issues';
 
 export const getProjectWithUsersAndIssues = catchErrors(async (req, res) => {
-    const project = await findEntityOrThrow(Project, req.currentUser.projectId, {
+    const project = await findEntityOrThrow(Project, req.params.issueId, {
         relations: ['users', 'issues'],
     });
+  
     res.respond({
         project: {
             ...project,

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-import { color, font } from 'shared/utils/styles';
-import { Button, Form } from 'shared/components';
+import {color, font} from 'shared/utils/styles';
+import {Button, Form} from 'shared/components';
 
 export const FormElement = styled(Form.Element)`
   padding: 25px 40px 35px;
@@ -10,6 +10,17 @@ export const FormElement = styled(Form.Element)`
 export const FormHeading = styled.div`
   padding-bottom: 15px;
   ${font.size(21)}
+`;
+
+export const FormTip = styled.div`
+  padding-top: 6px;
+  color: #5E6C84;
+  font-size: 12.5px;
+
+  a {
+    cursor: pointer;
+    color: #0052cc;
+  }
 `;
 
 export const SelectItem = styled.div`

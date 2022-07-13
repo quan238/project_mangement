@@ -15,6 +15,15 @@ import SelectProject from './SelectProject'
 import ProjectSettings from './ProjectSettings';
 import {ProjectPage} from './Styles';
 
+
+const setProjectSelected = (id) => {
+    localStorage.setItem('projectSelected', id)
+}
+
+const getProjectSelected = () => {
+    return localStorage.getItem('projectSelected')
+}
+
 const Project = () => {
     const match = useRouteMatch();
     const history = useHistory();
@@ -22,8 +31,9 @@ const Project = () => {
     const issueSearchModalHelpers = createQueryParamModalHelpers('issue-search');
     const issueCreateModalHelpers = createQueryParamModalHelpers('issue-create');
     const selectProject = createQueryParamModalHelpers('select-project');
-    const [{data, error, setLocalData}, fetchProject] = useApi.get('/project');
-    const [selectedProject, setSelectedProject] = React.useState(null)
+    const selectedProject = getProjectSelected()
+    const [{data, error, setLocalData}, fetchProject] = useApi.get(`/project/${selectedProject ? selectProject : 1}`);
+
     if (!data) return <PageLoader/>;
     if (error) return <PageError/>;
 
@@ -42,18 +52,21 @@ const Project = () => {
         selectProject.open()
     }
 
+    const onSelectProject = (projectId) => {
+        setProjectSelected(projectId)
+        selectProject.close()
+        fetchProject(projectId)
+    }
 
     return (
         <Fragment>
             <Header
+                selectModalOpen={selectProject.open}
                 issueSearchModalOpen={issueSearchModalHelpers.open}
                 issueCreateModalOpen={issueCreateModalHelpers.open}
+                isButton={true}
             />
             <ProjectPage>
-                {/* <NavbarLeft
-        issueSearchModalOpen={issueSearchModalHelpers.open}
-        issueCreateModalOpen={issueCreateModalHelpers.open}
-      /> */}
 
                 <Sidebar project={project}/>
 
@@ -77,9 +90,7 @@ const Project = () => {
                         onClose={selectProject.close}
                         renderContent={modal => (
                             <SelectProject
-                                project={project}
-                                fetchProject={fetchProject}
-                                onCreate={() => history.push(`${match.url}/board`)}
+                                onCreate={onSelectProject}
                                 modalClose={modal.close}
                             />
                         )}

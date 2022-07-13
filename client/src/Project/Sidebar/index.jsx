@@ -46,7 +46,7 @@ const ProjectSidebar = ({ project }) => {
   );
 };
 
-const renderLinkItem = (match, text, iconType, path) => {
+export const renderLinkItem = (match, text, iconType, path) => {
   const isImplemented = !!path;
 
   const linkItemProps = isImplemented

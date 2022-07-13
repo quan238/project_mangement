@@ -12,24 +12,25 @@ import {
     Actions,
     ActionButton, FormTip,
 } from './Styles';
+import {useHistory} from "react-router-dom";
 
 const propTypes = {
     onCreate: PropTypes.func.isRequired,
     modalClose: PropTypes.func.isRequired,
 };
 
-const SelectProject = ({onCreate, modalClose}) => {
+const SelectProject = ({selectedProject: projectSelectedData, onCreate, modalClose}) => {
     const [{data, error}] = useApi.get('/project/me');
-    console.log(data)
+    const history = useHistory()
     if (!data) return <PageLoader/>;
     if (error) return <PageError/>;
 
     return (
         <Form
             enableReinitialize
-            initialValues={{
-                projectId: ''
-            }}
+            initialValues={Form.initialValues(projectSelectedData, get => ({
+                projectId: get('id'),
+            }))}
             validations={{
                 projectId: Form.is.required(),
             }}
@@ -54,7 +55,7 @@ const SelectProject = ({onCreate, modalClose}) => {
                 />
                 {/* eslint-disable-next-line react/no-unescaped-entities */}
                 <FormTip>Select your project to go to project's dashboard. If you want to create new project, Please
-                    <a> click here</a></FormTip>
+                    <span onClick={() => history.push('/create-project')}> click here</span></FormTip>
 
 
                 <Actions>

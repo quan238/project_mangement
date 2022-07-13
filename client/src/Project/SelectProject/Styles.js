@@ -17,7 +17,7 @@ export const FormTip = styled.div`
   color: #5E6C84;
   font-size: 12.5px;
 
-  a {
+  span {
     cursor: pointer;
     color: #0052cc;
   }

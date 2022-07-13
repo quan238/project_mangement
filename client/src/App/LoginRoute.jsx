@@ -3,7 +3,7 @@ import { Route } from 'react-router-dom';
 
 function LoginRoute({ component: Component, ...restOfProps }) {
   React.useEffect(() => {
-    localStorage.removeItem('authToken');
+    localStorage.clear()
   });
 
   return <Route {...restOfProps} render={props => <Component {...props} />} />;

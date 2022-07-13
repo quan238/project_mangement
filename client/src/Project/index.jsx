@@ -14,6 +14,7 @@ import IssueCreate from './IssueCreate';
 import SelectProject from './SelectProject'
 import ProjectSettings from './ProjectSettings';
 import {ProjectPage} from './Styles';
+import useCurrentUser from "../shared/hooks/currentUser";
 
 
 const setProjectSelected = (id) => {
@@ -21,7 +22,13 @@ const setProjectSelected = (id) => {
 }
 
 const getProjectSelected = () => {
-    return localStorage.getItem('projectSelected')
+    const projectSelected = localStorage.getItem('projectSelected')
+
+    return parseInt(projectSelected)
+}
+
+export const removeProjectSelected = () => {
+    return localStorage.removeItem('projectSelected')
 }
 
 const Project = () => {
@@ -32,10 +39,28 @@ const Project = () => {
     const issueCreateModalHelpers = createQueryParamModalHelpers('issue-create');
     const selectProject = createQueryParamModalHelpers('select-project');
     const selectedProject = getProjectSelected()
-    const [{data, error, setLocalData}, fetchProject] = useApi.get(`/project/${selectedProject ? selectProject : 1}`);
 
-    if (!data) return <PageLoader/>;
-    if (error) return <PageError/>;
+    const users = useCurrentUser()
+
+    const [{
+        data: selectedData,
+        error: errorSelected,
+    }] = useApi.get(`/project/me`);
+
+    const defaultSelectedProject = selectedData && selectedData.length > 0 ? selectedData[0].id : null
+
+    if (!defaultSelectedProject && !selectProject) {
+        history.push('/create-project')
+    }
+
+    const [{
+        data,
+        error,
+        setLocalData
+    }, fetchProject] = useApi.get(`/project`, {projectId: selectedProject || defaultSelectedProject});
+
+    if (!data || !selectedData) return <PageLoader/>;
+    if (error || errorSelected) return <PageError/>;
 
     const {project} = data;
 
@@ -53,6 +78,7 @@ const Project = () => {
     }
 
     const onSelectProject = (projectId) => {
+        removeProjectSelected()
         setProjectSelected(projectId)
         selectProject.close()
         fetchProject(projectId)
@@ -65,6 +91,7 @@ const Project = () => {
                 issueSearchModalOpen={issueSearchModalHelpers.open}
                 issueCreateModalOpen={issueCreateModalHelpers.open}
                 isButton={true}
+                user={users.currentUser}
             />
             <ProjectPage>
 
@@ -90,6 +117,7 @@ const Project = () => {
                         onClose={selectProject.close}
                         renderContent={modal => (
                             <SelectProject
+                                selectedProject={project}
                                 onCreate={onSelectProject}
                                 modalClose={modal.close}
                             />

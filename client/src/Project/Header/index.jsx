@@ -1,14 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {StyledButton} from 'shared/components/Button/Styles';
-import {Button} from 'shared/components';
+import {Avatar, Button, Icon} from 'shared/components';
 import {HeaderStyled, LogoLink, ItemList} from './Styles';
 import Logo from './logo.svg';
+import HeaderUser from "./HeaderUser";
+import {Item, ItemText} from "../NavbarLeft/Styles";
 
 const propTypes = {};
 
 // eslint-disable-next-line react/prop-types
-const ProjectTopHeader = ({issueSearchModalOpen, issueCreateModalOpen, selectModalOpen, isButton}) => (
+const ProjectTopHeader = ({issueSearchModalOpen, user, issueCreateModalOpen, selectModalOpen, isButton}) => (
     <HeaderStyled className="header">
         <LogoLink to="/">
             <img src={Logo} alt="123"/>
@@ -28,6 +30,17 @@ const ProjectTopHeader = ({issueSearchModalOpen, issueCreateModalOpen, selectMod
                 </ItemList>
             </React.Fragment>
             : null}
+        <HeaderUser
+            placement="bottom"
+            offset={{
+                left: -125
+            }}
+            renderLink={linkProps => (
+                <div {...linkProps}>
+                    <Avatar avatarUrl={user.avatarUrl} name={user.name} size={35}/>
+                </div>
+            )}
+        />
 
     </HeaderStyled>
 );

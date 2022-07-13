@@ -1,13 +1,15 @@
 import {Project, User} from 'entities';
 import {catchErrors} from 'errors';
-import {findEntityOrThrow, updateEntity} from 'utils/typeorm';
+import {createEntity, findEntityOrThrow, updateEntity} from 'utils/typeorm';
 import {issuePartial} from 'serializers/issues';
 
 export const getProjectWithUsersAndIssues = catchErrors(async (req, res) => {
-    const project = await findEntityOrThrow(Project, req.params.issueId, {
+    const {projectId} = req.query;
+
+    const project = await findEntityOrThrow(Project, projectId as string, {
         relations: ['users', 'issues'],
     });
-  
+
     res.respond({
         project: {
             ...project,
@@ -16,9 +18,14 @@ export const getProjectWithUsersAndIssues = catchErrors(async (req, res) => {
     });
 });
 
+export const create = catchErrors(async (req, res) => {
+    const project = await createEntity(Project, req.body)
+    res.respond({project});
+});
+
 export const getYourProject = catchErrors(async (req, res) => {
     const userId = req.currentUser.id;
-    console.log(userId)
+
     const project = await Project.createQueryBuilder('project')
         .relation(User, 'project')
         .of(userId)

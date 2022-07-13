@@ -1,105 +1,129 @@
-import React, { Fragment } from 'react';
-import { Route, Redirect, useRouteMatch, useHistory } from 'react-router-dom';
+import React, {Fragment} from 'react';
+import {Route, Redirect, useRouteMatch, useHistory} from 'react-router-dom';
 
 import useApi from 'shared/hooks/api';
-import { updateArrayItemById } from 'shared/utils/javascript';
-import { createQueryParamModalHelpers } from 'shared/utils/queryParamModal';
-import { PageLoader, PageError, Modal } from 'shared/components';
+import {updateArrayItemById} from 'shared/utils/javascript';
+import {createQueryParamModalHelpers} from 'shared/utils/queryParamModal';
+import {PageLoader, PageError, Modal} from 'shared/components';
 
 import Header from './Header';
 import Sidebar from './Sidebar';
 import Board from './Board';
 import IssueSearch from './IssueSearch';
 import IssueCreate from './IssueCreate';
+import SelectProject from './SelectProject'
 import ProjectSettings from './ProjectSettings';
-import { ProjectPage } from './Styles';
+import {ProjectPage} from './Styles';
 
 const Project = () => {
-  const match = useRouteMatch();
-  const history = useHistory();
+    const match = useRouteMatch();
+    const history = useHistory();
 
-  const issueSearchModalHelpers = createQueryParamModalHelpers('issue-search');
-  const issueCreateModalHelpers = createQueryParamModalHelpers('issue-create');
+    const issueSearchModalHelpers = createQueryParamModalHelpers('issue-search');
+    const issueCreateModalHelpers = createQueryParamModalHelpers('issue-create');
+    const selectProject = createQueryParamModalHelpers('select-project');
+    const [{data, error, setLocalData}, fetchProject] = useApi.get('/project');
+    const [selectedProject, setSelectedProject] = React.useState(null)
+    if (!data) return <PageLoader/>;
+    if (error) return <PageError/>;
 
-  const [{ data, error, setLocalData }, fetchProject] = useApi.get('/project');
+    const {project} = data;
 
-  if (!data) return <PageLoader />;
-  if (error) return <PageError />;
+    const updateLocalProjectIssues = (issueId, updatedFields) => {
+        setLocalData(currentData => ({
+            project: {
+                ...currentData.project,
+                issues: updateArrayItemById(currentData.project.issues, issueId, updatedFields),
+            },
+        }));
+    };
 
-  const { project } = data;
+    if (!selectedProject && !selectProject.isOpen()) {
+        selectProject.open()
+    }
 
-  const updateLocalProjectIssues = (issueId, updatedFields) => {
-    setLocalData(currentData => ({
-      project: {
-        ...currentData.project,
-        issues: updateArrayItemById(currentData.project.issues, issueId, updatedFields),
-      },
-    }));
-  };
 
-  return (
-    <Fragment>
-      <Header
-        issueSearchModalOpen={issueSearchModalHelpers.open}
-        issueCreateModalOpen={issueCreateModalHelpers.open}
-      />
-      <ProjectPage>
-        {/* <NavbarLeft
+    return (
+        <Fragment>
+            <Header
+                issueSearchModalOpen={issueSearchModalHelpers.open}
+                issueCreateModalOpen={issueCreateModalHelpers.open}
+            />
+            <ProjectPage>
+                {/* <NavbarLeft
         issueSearchModalOpen={issueSearchModalHelpers.open}
         issueCreateModalOpen={issueCreateModalHelpers.open}
       /> */}
 
-        <Sidebar project={project} />
+                <Sidebar project={project}/>
 
-        {issueSearchModalHelpers.isOpen() && (
-          <Modal
-            isOpen
-            testid="modal:issue-search"
-            variant="aside"
-            width={600}
-            onClose={issueSearchModalHelpers.close}
-            renderContent={() => <IssueSearch project={project} />}
-          />
-        )}
+                {issueSearchModalHelpers.isOpen() && (
+                    <Modal
+                        isOpen
+                        testid="modal:issue-search"
+                        variant="aside"
+                        width={600}
+                        onClose={issueSearchModalHelpers.close}
+                        renderContent={() => <IssueSearch project={project}/>}
+                    />
+                )}
 
-        {issueCreateModalHelpers.isOpen() && (
-          <Modal
-            isOpen
-            testid="modal:issue-create"
-            width={800}
-            withCloseIcon={false}
-            onClose={issueCreateModalHelpers.close}
-            renderContent={modal => (
-              <IssueCreate
-                project={project}
-                fetchProject={fetchProject}
-                onCreate={() => history.push(`${match.url}/board`)}
-                modalClose={modal.close}
-              />
-            )}
-          />
-        )}
+                {selectProject.isOpen() && (
+                    <Modal
+                        isOpen
+                        testid="modal:issue-create"
+                        width={800}
+                        withCloseIcon={false}
+                        onClose={selectProject.close}
+                        renderContent={modal => (
+                            <SelectProject
+                                project={project}
+                                fetchProject={fetchProject}
+                                onCreate={() => history.push(`${match.url}/board`)}
+                                modalClose={modal.close}
+                            />
+                        )}
+                    />
+                )}
 
-        <Route
-          path={`${match.path}/board`}
-          render={() => (
-            <Board
-              project={project}
-              fetchProject={fetchProject}
-              updateLocalProjectIssues={updateLocalProjectIssues}
-            />
-          )}
-        />
+                {issueCreateModalHelpers.isOpen() && (
+                    <Modal
+                        isOpen
+                        testid="modal:issue-create"
+                        width={800}
+                        withCloseIcon={false}
+                        onClose={issueCreateModalHelpers.close}
+                        renderContent={modal => (
+                            <IssueCreate
+                                project={project}
+                                fetchProject={fetchProject}
+                                onCreate={() => history.push(`${match.url}/board`)}
+                                modalClose={modal.close}
+                            />
+                        )}
+                    />
+                )}
 
-        <Route
-          path={`${match.path}/settings`}
-          render={() => <ProjectSettings project={project} fetchProject={fetchProject} />}
-        />
+                <Route
+                    path={`${match.path}/board`}
+                    render={() => (
+                        <Board
+                            project={project}
+                            fetchProject={fetchProject}
+                            updateLocalProjectIssues={updateLocalProjectIssues}
+                        />
+                    )}
+                />
 
-        {match.isExact && <Redirect to={`${match.url}/board`} />}
-      </ProjectPage>
-    </Fragment>
-  );
+                <Route
+                    path={`${match.path}/settings`}
+                    render={() => <ProjectSettings project={project} fetchProject={fetchProject}/>}
+                />
+
+                {match.isExact && <Redirect to={`${match.url}/board`}/>}
+            </ProjectPage>
+        </Fragment>
+    );
 };
 
 export default Project;

@@ -1,12 +1,12 @@
 import { User } from 'entities';
 import { catchErrors } from 'errors';
-import { createEntity, findEntityOrThrow } from 'utils/typeorm';
+import { createEntity } from 'utils/typeorm';
 
 export const getCurrentUser = catchErrors((req, res) => {
   res.respond({ currentUser: req.currentUser });
 });
 
-export const getUsers = catchErrors(async (req, res) => {
+export const getUsers = catchErrors(async (_, res) => {
   const users = await User.createQueryBuilder('user')
     .select()
     .getMany();

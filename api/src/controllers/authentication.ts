@@ -107,7 +107,7 @@ export const refreshAccessToken = catchErrors(async (req, res) => {
   });
 });
 
-export const logoutController = catchErrors(async (req, res) => {
+export const logoutController = catchErrors(async (_, res) => {
   const user = res.locals.user;
 
   await redis.del(user.id);

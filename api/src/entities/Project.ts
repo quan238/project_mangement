@@ -4,7 +4,7 @@ import {
   Column,
   PrimaryGeneratedColumn,
   CreateDateColumn,
-  OneToMany,
+  OneToMany, ManyToMany, JoinTable,
 } from 'typeorm';
 
 import is from 'utils/validation';
@@ -46,10 +46,11 @@ class Project extends BaseEntity {
   )
   issues: Issue[];
 
-  @OneToMany(
-    () => User,
-    user => user.project,
+  @ManyToMany(
+      () => User,
+      user => user.project,
   )
+  @JoinTable()
   users: User[];
 }
 

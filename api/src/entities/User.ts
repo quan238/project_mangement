@@ -6,7 +6,6 @@ import {
   CreateDateColumn,
   OneToMany,
   ManyToMany,
-  ManyToOne,
   RelationId,
   Index,
   BeforeInsert,
@@ -120,11 +119,11 @@ class User  extends BaseEntity{
   )
   issues: Issue[];
 
-  @ManyToOne(
+  @ManyToMany(
     () => Project,
     project => project.users,
   )
-  project: Project;
+  project: Project[];
 
   @RelationId((user: User) => user.project)
   projectId: number;

@@ -1,13 +1,13 @@
 import React from 'react';
 import toast from 'shared/utils/toast';
 import {Avatar, Form, Icon, PageError, PageLoader} from 'shared/components';
+import {useHistory} from "react-router-dom";
 import {FormHeading, FormElement, ActionButton, CreateProjectComponent} from './Styles';
 import {Actions, Divider, SelectItem, SelectItemLabel} from "../Project/IssueCreate/Styles";
 import Header from "../Project/Header";
 import {ProjectCategory, ProjectCategoryCopy} from "../shared/constants/projects";
 import useApi from "../shared/hooks/api";
 import useCurrentUser from "../shared/hooks/currentUser";
-import {useHistory} from "react-router-dom";
 import {removeProjectSelected} from "../Project";
 
 const propTypes = {};
@@ -16,12 +16,13 @@ const CreateProject = () => {
     const [{isCreating}, createProject] = useApi.post('/project');
     const currentUser = useCurrentUser()
     const history = useHistory();
-    const [{data, error, setLocalData}, fetchUsers] = useApi.get(`/users`);
+    const [{data, error}] = useApi.get(`/users`);
+
 
     if (!data || !currentUser) return <PageLoader/>;
     if (error) return <PageError/>;
-    const {users} = data
 
+    const {users} = data
     return (
         <CreateProjectComponent>
             <Header
@@ -47,10 +48,10 @@ const CreateProject = () => {
                     try {
                         await createProject({
                             ...values,
-                            users: [...values.users, currentUser.currentUser]
+                            users: [...users.filter((item) => values.users.includes(item.id)), currentUser.currentUser]
                         });
                         removeProjectSelected()
-                     
+
                         history.replace('/project')
                         toast.success('Create project have been successfully.');
                     } catch (error) {
@@ -85,8 +86,8 @@ const CreateProject = () => {
                         name="users"
                         label="Assignees"
                         tio="People who are responsible for join this project."
-                        options={userOptions(users)}
-                        renderOption={renderUser(users)}
+                        options={userOptions(users, currentUser.currentUser.id)}
+                        renderOption={renderUser(users, currentUser.currentUser.id)}
                         renderValue={renderUser(users)}
                     />
                     <Actions>
@@ -103,18 +104,25 @@ const CreateProject = () => {
     );
 };
 
-const userOptions = users => users.map(user => ({value: user.id, label: user.name}));
-const renderUser = users => ({value: userId, removeOptionValue}) => {
-    const user = users.find(({id}) => id === userId);
+const userOptions = (users, removeID) => users.filter(({id}) => id !== removeID).map(user => ({
+    value: user.id,
+    label: user.name
+}));
+const renderUser = (users, removeID) => ({value: userId, removeOptionValue}) => {
+    if (userId === removeID) {
+        return <div/>
+    }
+    const user = users.filter(({id}) => id !== removeID)
+    const findUser = user.find(({id}) => id === userId)
 
     return (
         <SelectItem
-            key={user.id}
+            key={findUser.id}
             withBottomMargin={!!removeOptionValue}
             onClick={() => removeOptionValue && removeOptionValue()}
         >
-            <Avatar size={20} avatarUrl={user.avatarUrl} name={user.name}/>
-            <SelectItemLabel>{user.name}</SelectItemLabel>
+            <Avatar size={20} avatarUrl={findUser.avatarUrl} name={findUser.name}/>
+            <SelectItemLabel>{findUser.name}</SelectItemLabel>
             {removeOptionValue && <Icon type="close" top={2}/>}
         </SelectItem>
     );

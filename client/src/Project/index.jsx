@@ -46,9 +46,8 @@ const Project = () => {
         data: selectedData,
         error: errorSelected,
     }] = useApi.get(`/project/me`);
-    console.log(selectedData)
+ 
     // const defaultSelectedProject = selectedData && selectedData.length > 0 ? selectedData[0].id : null
-
 
 
     React.useEffect(() => {
